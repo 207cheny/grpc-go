@@ -124,6 +124,7 @@ func (b *dnsBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts 
 
 	// IP address.
 	if ipAddr, err := formatIP(host); err == nil {
+		logger.Infof("dns: target is an IP address: %v,port: %s", ipAddr, port)
 		addr := []resolver.Address{{Addr: ipAddr + ":" + port}}
 		cc.UpdateState(resolver.State{Addresses: addr})
 		return deadResolver{}, nil
@@ -209,6 +210,7 @@ func (d *dnsResolver) watcher() {
 			// Report error to the underlying grpc.ClientConn.
 			d.cc.ReportError(err)
 		} else {
+			logger.Infof("watcher-dns: update state: %+v", state)
 			err = d.cc.UpdateState(*state)
 		}
 
@@ -269,6 +271,7 @@ func (d *dnsResolver) lookupSRV(ctx context.Context) ([]resolver.Address, error)
 			newAddrs = append(newAddrs, resolver.Address{Addr: addr, ServerName: s.Target})
 		}
 	}
+	logger.Infof("dns: SRV lookup result: %+v", newAddrs)
 	return newAddrs, nil
 }
 
@@ -330,6 +333,7 @@ func (d *dnsResolver) lookupHost(ctx context.Context) ([]resolver.Address, error
 		addr := ip + ":" + d.port
 		newAddrs = append(newAddrs, resolver.Address{Addr: addr})
 	}
+	logger.Infof("dns: lookupHost result: %+v", newAddrs)
 	return newAddrs, nil
 }
 
@@ -349,6 +353,7 @@ func (d *dnsResolver) lookup() (*resolver.State, error) {
 	if !d.disableServiceConfig {
 		state.ServiceConfig = d.lookupTXT(ctx)
 	}
+	logger.Infof("dns: lookup result: %+v", state)
 	return &state, nil
 }
 
