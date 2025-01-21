@@ -222,6 +222,7 @@ func (d *dnsResolver) watcher() {
 			nextResolutionTime = internal.TimeNowFunc().Add(MinResolutionInterval)
 			select {
 			case <-d.ctx.Done():
+				logger.Infof("watcher-dns: context canceled, returning")
 				return
 			case <-d.rn:
 			}
@@ -233,6 +234,7 @@ func (d *dnsResolver) watcher() {
 		}
 		select {
 		case <-d.ctx.Done():
+			logger.Infof("watcher-dns: context canceled, returning")
 			return
 		case <-internal.TimeAfterFunc(internal.TimeUntilFunc(nextResolutionTime)):
 		}
