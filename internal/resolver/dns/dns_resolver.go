@@ -211,6 +211,7 @@ func (d *dnsResolver) watcher() {
 			d.cc.ReportError(err)
 		} else {
 			logger.Infof("watcher-dns: update state: %+v", state)
+			fmt.Printf("watcher-dns: update state: %+v\n", state)
 			err = d.cc.UpdateState(*state)
 		}
 
@@ -223,6 +224,7 @@ func (d *dnsResolver) watcher() {
 			select {
 			case <-d.ctx.Done():
 				logger.Infof("watcher-dns: context canceled, returning")
+				fmt.Printf("watcher-dns: context canceled, returning\n")
 				return
 			case <-d.rn:
 			}
@@ -235,6 +237,7 @@ func (d *dnsResolver) watcher() {
 		select {
 		case <-d.ctx.Done():
 			logger.Infof("watcher-dns: context canceled, returning")
+			fmt.Printf("watcher-dns: context canceled, returning\n")
 			return
 		case <-internal.TimeAfterFunc(internal.TimeUntilFunc(nextResolutionTime)):
 		}
